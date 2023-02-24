@@ -63,7 +63,7 @@ export function fetchQuiz() {
     // On successful GET:
     // - Dispatch an action to send the obtained quiz to its state
     axios.get("http://localhost:9000/api/quiz/next")
-      .then(res => {
+      .then((res) => {
         dispatch(setQuiz(res.data));
         // dispatch(setMessage(res.data.message));
         console.log(res.data);
@@ -80,7 +80,7 @@ export function postAnswer(quiz_id, answer_id) {
     // - Dispatch an action to set the server message to state
     // - Dispatch the fetching of the next quiz
     axios.post('http://localhost:9000/api/quiz/answer', { quiz_id, answer_id })
-      .then(res => {
+      .then((res) => {
         dispatch(fetchQuiz());
         dispatch(setMessage(res.data.message));
         console.log(res.data)
@@ -90,12 +90,12 @@ export function postAnswer(quiz_id, answer_id) {
       })
   }
 }
-export function postQuiz() {
+export function postQuiz(question_text, true_answer_text, false_answer_text) {
   return function (dispatch) {
     // On successful POST:
     // - Dispatch the correct message to the the appropriate state
     // - Dispatch the resetting of the form
-    axios.post('http://localhost:9000/api/quiz/new')
+    axios.post('http://localhost:9000/api/quiz/new', {question_text, true_answer_text, false_answer_text})
     .then(res => {
       dispatch(setMessage(`Congrats: "${res.data.question} is a great question!`));
       dispatch(resetForm())

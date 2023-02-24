@@ -26,13 +26,14 @@ export function Quiz(props) {
   //   return id.answer_id
   // })
 
-  const submitHandler = evt => {
-    evt.preventDefault();
-    postAnswer({
-      quiz_id: quiz.quiz_id,
-      answer_id: selectedAnswer,
-    });
-  }
+  // const submitHandler = evt => {
+  //   evt.preventDefault();
+  //   postAnswer({
+  //     quiz_id: quiz.quiz_id,
+  //     answer_id: selectedAnswer,
+  //   });
+  // }
+  
 
 
   return (
@@ -59,7 +60,7 @@ export function Quiz(props) {
               </div>
             </div>
 
-            <button id="submitAnswerBtn" onSubmit={submitHandler} disabled={!selectedAnswer}>Submit answer</button>
+            <button id="submitAnswerBtn" onClick={() => props.postAnswer(quiz.quiz_id, props.selectedAnswer)} disabled={!selectedAnswer}>Submit answer</button>
           </>
         ) : 'Loading next quiz...'
       }
@@ -67,7 +68,7 @@ export function Quiz(props) {
   )
 }
 
-export default connect((state) => state, actions)(Quiz)
+export default connect((state) => state, {...actions})(Quiz)
 
 // {selectedAnswer === quiz.answers[0].id ? "SELECTED" : "Select"}
 // `${selectedAnswer === quiz.answers[0].id ? "answer selected" : "answer"}`
