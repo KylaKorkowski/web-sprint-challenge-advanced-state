@@ -1,8 +1,18 @@
 import React from 'react'
+import { selectAnswer, setQuiz } from '../state/action-creators'
 
 export default function Quiz(props) {
+  const {selectAnswer, setQuiz, quiz, selectedAnswer } = props;
 
+  const handleClick = (id) => {
+    selectAnswer(id);
+  }
   
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+  }
+
+
   return (
     <div id="wrapper">
       {
@@ -12,10 +22,10 @@ export default function Quiz(props) {
             <h2>What is a closure?</h2>
 
             <div id="quizAnswers">
-              <div className="answer selected">
+              <div className="selectedanswer">
                 A function
-                <button>
-                  SELECTED
+                <button onClick={handleClick}>
+                  {/* {selectedAnswer === quiz.answers[0].id ? "SELECTED" : "Select"} */}
                 </button>
               </div>
 
@@ -27,10 +37,13 @@ export default function Quiz(props) {
               </div>
             </div>
 
-            <button id="submitAnswerBtn">Submit answer</button>
+            <button id="submitAnswerBtn" onSubmit={handleSubmit}>Submit answer</button>
           </>
         ) : 'Loading next quiz...'
       }
     </div>
   )
 }
+
+// {selectedAnswer === quiz.answers[0].id ? "SELECTED" : "Select"}
+// `${selectedAnswer === quiz.answers[0].id ? "answer selected" : "answer"}`

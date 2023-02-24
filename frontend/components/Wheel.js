@@ -1,22 +1,18 @@
 import React from 'react';
 import {connect} from "react-redux";
 import { moveClockwise, moveCounterClockwise } from '../state/action-creators';
-// import {wheel} from "../state/reducer";
 
 
 export function Wheel(props) {
   const {wheel, moveClockwise, moveCounterClockwise} = props;
 
   const handleCounterClockwise = () => {
-    // const { value } = evt.target;
     moveCounterClockwise()
-    console.log(props);
   };
   
 
   const handleClockwise = () => {
     moveClockwise();
-    console.log(props);
   };
 
   return (
