@@ -43,10 +43,10 @@ export function setQuiz(quiz) {
   };
 }
 
-export function inputChange(value) {
+export function inputChange({newQuestion, newTrueAnswer, newFalseAnswer}) {
   return {
     type: INPUT_CHANGE,
-    payload: value,
+    payload:{newQuestion, newTrueAnswer, newFalseAnswer},
   }
  }
 
@@ -90,12 +90,12 @@ export function postAnswer(quiz_id, answer_id) {
       })
   }
 }
-export function postQuiz(question_text, true_answer_text, false_answer_text) {
+export function postQuiz(newQuestion, newTrueAnswer, newFalseAnswer) {
   return function (dispatch) {
     // On successful POST:
     // - Dispatch the correct message to the the appropriate state
     // - Dispatch the resetting of the form
-    axios.post('http://localhost:9000/api/quiz/new', {question_text, true_answer_text, false_answer_text})
+    axios.post('http://localhost:9000/api/quiz/new', {newQuestion: newQuestion, newTrueAnswer: newTrueAnswer , newFalseAnswer: newFalseAnswer })
     .then(res => {
       dispatch(setMessage(`Congrats: "${res.data.question} is a great question!`));
       dispatch(resetForm())
