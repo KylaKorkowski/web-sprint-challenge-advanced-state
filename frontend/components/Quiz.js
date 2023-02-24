@@ -1,15 +1,37 @@
 import React from 'react'
-import { selectAnswer, setQuiz } from '../state/action-creators'
+import { useEffect } from 'react';
+// import { quiz } from '../state/action-creators'
+import * as actions from '../state/action-creators'
+import { connect } from 'react-redux';
 
-export default function Quiz(props) {
-  const {selectAnswer, setQuiz, quiz, selectedAnswer } = props;
+export function Quiz(props) {
+  const {selectAnswer, setQuiz, quiz, selectedAnswer, postAnswer, fetchQuiz} = props;
+
+  useEffect(() => {
+   fetchQuiz();
+  }, []);
+
 
   const handleClick = (id) => {
     selectAnswer(id);
   }
   
-  const handleSubmit = (evt) => {
+  // const question_id = props.question;
+
+  // const answers = props.quiz.map(a => {
+  //   return a.text
+  // })
+
+  // const answers_id = props.quiz.map(id => {
+  //   return id.answer_id
+  // })
+
+  const submitHandler = evt => {
     evt.preventDefault();
+    postAnswer({
+      quiz_id: quiz.quiz_id,
+      answer_id: selectedAnswer,
+    });
   }
 
 
@@ -17,27 +39,27 @@ export default function Quiz(props) {
     <div id="wrapper">
       {
         // quiz already in state? Let's use that, otherwise render "Loading next quiz..."
-        true ? (
+        quiz ? (
           <>
-            <h2>What is a closure?</h2>
+            <h2>{quiz.question}</h2>
 
             <div id="quizAnswers">
-              <div className="selectedanswer">
-                A function
-                <button onClick={handleClick}>
-                  {/* {selectedAnswer === quiz.answers[0].id ? "SELECTED" : "Select"} */}
+              <div className={`answer ${selectedAnswer === quiz.answers[0].answer_id ? "answer selected" : "answer"}`}>
+                {quiz.answers[0].text}
+                <button onClick={() => handleClick(quiz.answers[0].answer_id)}>
+                  {selectedAnswer === quiz.answers[0].answer_id ? "SELECTED" : "Select"}
                 </button>
               </div>
 
-              <div className="answer">
-                An elephant
-                <button>
-                  Select
+              <div className={`answer ${selectedAnswer === quiz.answers[1].answer_id ? "answer selected" : "answer"}`}>
+              {quiz.answers[1].text}
+                <button onClick={() => handleClick(quiz.answers[1].answer_id)}>
+                {selectedAnswer === quiz.answers[1].answer_id ? "SELECTED" : "Select"}
                 </button>
               </div>
             </div>
 
-            <button id="submitAnswerBtn" onSubmit={handleSubmit}>Submit answer</button>
+            <button id="submitAnswerBtn" onSubmit={submitHandler} disabled={!selectedAnswer}>Submit answer</button>
           </>
         ) : 'Loading next quiz...'
       }
@@ -45,5 +67,10 @@ export default function Quiz(props) {
   )
 }
 
+export default connect((state) => state, actions)(Quiz)
+
 // {selectedAnswer === quiz.answers[0].id ? "SELECTED" : "Select"}
 // `${selectedAnswer === quiz.answers[0].id ? "answer selected" : "answer"}`
+
+// disabled={`${props.selectedAnswer}`} onSubmit={() => props.postAnswer(quiz_id, props.selectedAnswer === answer_id[0], props.selectedAnswer === answer_id[1] ? "" : "{true}")}
+
