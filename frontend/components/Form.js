@@ -1,77 +1,66 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import * as actionCreators from '../state/action-creators'
+import { postQuiz, inputChange, resetForm} from '../state/action-creators'
 
-export function Form(props) {
-  // console.log("STATE:", props.form)
 
-  const { inputChange, form, postQuiz, resetForm} = props;
+function Form(props) {
+  
+  const { newFalseAnswer, newQuestion, newTrueAnswer, postQuiz, inputChange} = props;
 
-  const onInputChange = evt => {
-    props.form.newQuestion = evt.target.value
-    props.inputChange(newQuestion)
+  const onChange = evt => {
+    inputChange(evt.target.id, evt.target.value)
   }
 
-  const onTrueChange = evt => {
-    props.form.newTrueAnswer = evt.target.value
-    props.inputChange(newTrueAnswer)
-  }
-
-  const onFalseChange = evt => {
-    props.form.newFalseAnswer = evt.target.value
-    props.inputChange(newFalseAnswer)
-  }
-
-  const onSubmit = evt => {
+  const onSubmit = (evt) => {
+    console.log(newFalseAnswer)
     evt.preventDefault();
-    postQuiz(
-      form.newQuestion,
-      form.newTrueAnswer,
-      form.newFalseAnswer,
-    );
-    resetForm({
-      newQuestion: '',
-      newTrueAnswer: '',
-      newFalseAnswer: ''
-    }
-    );
-    
+    postQuiz({
+      question_text: newQuestion,
+      true_answer_text: newTrueAnswer,
+      false_answer_text: newFalseAnswer
+    });
+    resetForm();
   }
-
-  const enabled = form.newQuestion.trim().length > 1 && form.newTrueAnswer.trim().length > 1 && form.newFalseAnswer.trim().length > 1;
-
-  // props.form.newQuestion.trim().length > 0 && props.form.newTrueAnswer.trim().length > 0 && props.form.newFalseAnswer.trim().length > 0 ? false : true 
 
   return (
-    <form id="form" onSubmit={onSubmit}>
+    <form id="form" >
       <h2>Create New Quiz</h2>
-      <input 
-        maxLength={50} 
-        onChange={onInputChange} 
-        id="newQuestion" 
-        placeholder="Enter question"   
-        value={props.form.newQuestion}
+      <input
+        maxLength={50}
+        id="newQuestion"
+        value={newQuestion}
+        onChange={onChange}
+        placeholder="Enter question"
       />
 
-      <input 
-        maxLength={50} 
-        onChange={onTrueChange} 
-        id="newTrueAnswer" 
-        placeholder="Enter true answer" 
-        value={props.form.newTrueAnswer}
+      <input
+        maxLength={50}
+        onChange={onChange}
+        value={newTrueAnswer}
+        id="newTrueAnswer"
+        placeholder="Enter true answer"
       />
 
-      <input 
-        maxLength={50} 
-        onChange={onFalseChange} 
-        id="newFalseAnswer" 
-        placeholder="Enter false answer" 
-        value={props.form.newFalseAnswer}
+      <input
+        maxLength={50}
+        onChange={onChange}
+        value={newFalseAnswer}
+        id="newFalseAnswer"
+        placeholder="Enter false answer"
       />
 
-      <button id="submitNewQuizBtn" disabled={!enabled}>Submit new quiz</button>
+      <button id="submitNewQuizBtn" onClick={onSubmit} disabled={newQuestion.trim().length > 0 && newTrueAnswer.trim().length > 0 && newFalseAnswer.trim().length > 0 ? false : true}>Submit new quiz</button>
     </form>
   )
 }
 
-export default connect((state) => state, actionCreators)(Form)
+const mapStateToProps = state => {
+  return {
+    newQuestion: state.form.newQuestion,
+    newTrueAnswer: state.form.newTrueAnswer,
+    newFalseAnswer: state.form.newFalseAnswer,
+    state: state.form
+  }
+}
+
+export default connect(mapStateToProps, { resetForm, inputChange, postQuiz })(Form)

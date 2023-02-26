@@ -1,77 +1,63 @@
-import React from 'react'
-import { useEffect } from 'react';
-// import { quiz } from '../state/action-creators'
-import * as actions from '../state/action-creators'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux';
+import { fetchQuiz, selectAnswer, postAnswer } from '../state/action-creators';
 
-export function Quiz(props) {
-  const {selectAnswer, setQuiz, quiz, selectedAnswer, postAnswer, fetchQuiz} = props;
+function Quiz(props) {
+
+  const { question, fetchQuiz, answer, selectAnswer, postAnswer} = props;
 
   useEffect(() => {
-   fetchQuiz();
-  }, []);
+    if (question === null) {
+      fetchQuiz();
+    }
+  });
 
 
-  const handleClick = (id) => {
-    selectAnswer(id);
+  const clickAnswer = (evt) => {
+    console.log(question.quiz_id);
+    selectAnswer(evt.target.id);
   }
-  
-  // const question_id = props.question;
 
-  // const answers = props.quiz.map(a => {
-  //   return a.text
-  // })
-
-  // const answers_id = props.quiz.map(id => {
-  //   return id.answer_id
-  // })
-
-  // const submitHandler = evt => {
-  //   evt.preventDefault();
-  //   postAnswer({
-  //     quiz_id: quiz.quiz_id,
-  //     answer_id: selectedAnswer,
-  //   });
-  // }
-  
-
+  const submitAnswer = () => {
+    postAnswer({quiz_id: question.quiz_id, answer_id: answer})
+  }
 
   return (
     <div id="wrapper">
-      {
-        // quiz already in state? Let's use that, otherwise render "Loading next quiz..."
-        quiz ? (
-          <>
-            <h2>{quiz.question}</h2>
+      {question || answer ? (
+        <>
+          <h2>{`${question.question}`}</h2>
 
-            <div id="quizAnswers">
-              <div className={`answer ${selectedAnswer === quiz.answers[0].answer_id ? "answer selected" : "answer"}`}>
-                {quiz.answers[0].text}
-                <button onClick={() => handleClick(quiz.answers[0].answer_id)}>
-                  {selectedAnswer === quiz.answers[0].answer_id ? "SELECTED" : "Select"}
-                </button>
-              </div>
-
-              <div className={`answer ${selectedAnswer === quiz.answers[1].answer_id ? "answer selected" : "answer"}`}>
-              {quiz.answers[1].text}
-                <button onClick={() => handleClick(quiz.answers[1].answer_id)}>
-                {selectedAnswer === quiz.answers[1].answer_id ? "SELECTED" : "Select"}
-                </button>
-              </div>
+          <div id="quizAnswers">
+            <div className= {`answer${answer === question.aZeroId ? ' selected' : ''}`}
+            >
+              {`${question.aZero}`}
+              <button id={question.aZeroId} onClick={clickAnswer}>
+                {answer === question.aZeroId ? "SELECTED" : "Select"}
+              </button>
             </div>
 
-            <button id="submitAnswerBtn" onClick={() => props.postAnswer(quiz.quiz_id, props.selectedAnswer)} disabled={!selectedAnswer}>Submit answer</button>
-          </>
-        ) : 'Loading next quiz...'
+            <div className= {`answer${answer === question.aOneId ? ' selected' : ''}`} >
+              {`${question.aOne}`}
+              <button id={question.aOneId} onClick={clickAnswer}>
+              { answer === question.aOneId ? "SELECTED" : "Select"}
+              </button>
+            </div>
+          </div>
+
+          <button disabled={answer ? false : true} id="submitAnswerBtn" onClick={submitAnswer}>Submit answer</button>
+        </>
+      ) : 'Loading next quiz...'
       }
     </div>
   )
 }
 
-export default connect((state) => state, {...actions})(Quiz)
+const mapStateToProps = state => {
+  return {
+    question: state.quiz.question,
+    answer: state.selectedAnswer.answer
+  }
+}
 
-// {selectedAnswer === quiz.answers[0].id ? "SELECTED" : "Select"}
-// `${selectedAnswer === quiz.answers[0].id ? "answer selected" : "answer"}`
-
-// disabled={`${props.selectedAnswer}`} onSubmit={() => props.postAnswer(quiz_id, props.selectedAnswer === answer_id[0], props.selectedAnswer === answer_id[1] ? "" : "{true}")}
-
+export default connect(mapStateToProps, { fetchQuiz, selectAnswer, postAnswer })(Quiz)
